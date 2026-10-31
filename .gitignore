@@ -1,0 +1,14 @@
+node_modules
+dist
+test-results
+playwright-report
+*.local
+*.tsbuildinfo
+*.log
+.vercel/
+.wrangler/
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
