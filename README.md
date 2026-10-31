@@ -54,7 +54,3 @@ npm run preview
 测试覆盖首屏无白屏、无外部网络依赖、个人资料与照片、本地持久化、撤销重做、全部 75 个模板选项的页底边界、24 套新增主题的图形及非颜色版式去重、模板背景跟随及手动覆盖、示例内容恢复及一步撤销、组件图标搜索和样式、预览弹窗、鼠标及原生触屏实时拖拽、缩进、跨栏目移动、多页页码、320px 手机适配、PDF 导出设置与实际下载、JSON 备份。当前 Playwright 配置使用 Windows 已安装的 Microsoft Edge，其他环境请调整 `playwright.config.ts` 中的浏览器路径。
 
 技术栈：React + TypeScript + Vite，Lucide React，html2canvas，jsPDF。无后端。
-
-## 许可证
-
-当前尚未指定本项目的开源许可证。发布到公开仓库前，请由作者确认授权范围并添加相应的 `LICENSE` 文件；公开源码不等于自动授予开源使用权限。参考 [GitHub 许可证说明](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)。第三方依赖仍遵循各自的许可证。
