@@ -37,6 +37,8 @@ export async function exportPDF(
       logging: false,
       width: 794,
       height: 1123,
+      // Do not clone the entire template gallery or studio chrome for each page.
+      ignoreElements: (el) => el.matches(".editor-pane,.topbar,.mobile-nav,.preview-toolbar,.preview-bottom,.preview-intro,.preview-end,.modal-backdrop,.export-overlay,.toast,.resume-measure"),
       onclone: (clone) => {
         const stage = clone.querySelector<HTMLElement>(".pages-stage");
         if (stage) {
@@ -79,6 +81,7 @@ export async function exportPDF(
           .forEach((el) =>
             el.classList.remove("preview-drop-before", "preview-drop-after"),
           );
+        clone.querySelectorAll(".layout-selected").forEach(el => el.classList.remove("layout-selected"));
         if (!settings.watermark) {
           clone.querySelectorAll(".paper-brand").forEach((el) => el.remove());
           clone.querySelectorAll(".paper-watermark").forEach((el) => {
@@ -112,7 +115,7 @@ export async function exportPDF(
   onProgress(100);
   const filename =
     (
-      settings.fileName.trim().replace(/\.pdf$/i, "") ||
+      settings.fileName.trim().replace(/\.(pdf|docx)$/i, "") ||
       `${name || "我的简历"}_Birchify`
     )
       .replace(/[<>:"/\\|?*\x00-\x1f]/g, "")

@@ -2,6 +2,7 @@ import { Artwork } from "./Artwork";
 import { designFor } from "./designs";
 import type { Template } from "./types";
 import { ThemeScenery, themedSurfaces } from "./ThemeScenery";
+import { NewScenery, newSurfaces } from "./NewScenery";
 
 function Paw({ x, y, turn = 0 }: { x: number; y: number; turn?: number }) {
   return <g transform={`translate(${x} ${y}) rotate(${turn})`}><ellipse cy="7" rx="8" ry="6"/><ellipse cx="-10" cy="-2" rx="3" ry="4"/><ellipse cx="-4" cy="-9" rx="3" ry="4"/><ellipse cx="4" cy="-9" rx="3" ry="4"/><ellipse cx="10" cy="-2" rx="3" ry="4"/></g>;
@@ -17,11 +18,12 @@ export function PageScenery({ template, accent = template.color }: { template: T
   const secondary = d.secondary || "#e8ede7";
   const garden = ["garden", "forest"].includes(d.surface);
   const sky = ["sky", "cosmos", "night", "sunny"].includes(d.surface);
-  const customScene = themedSurfaces.has(d.surface);
+  const customScene = themedSurfaces.has(d.surface) || newSurfaces.has(d.surface);
   return <div className={`cartoon-scene scene-${d.surface}`} aria-hidden="true">
     <svg className="whole-page-scene" width="794" height="1123" viewBox="0 0 794 1123" fill="none">
       {!customScene && <rect x="14" y="14" width="766" height="1095" rx={d.surface === "letter" ? 4 : 32} stroke={secondary} strokeWidth="3" strokeDasharray={d.surface === "postcard" ? "12 8" : undefined}/>}
       <ThemeScenery surface={d.surface} ink={accent} tint={secondary}/>
+      <NewScenery surface={d.surface} ink={accent} tint={secondary}/>
       {d.surface === "journal" && <g fill={secondary}>{Array.from({length:16},(_, i)=><g key={i}><rect x="10" y={60+i*64} width="36" height="12" rx="6"/><circle cx="36" cy={66+i*64} r="3" fill="#fff"/></g>)}</g>}
       {d.surface === "honey" && <><path d="M16 16H778V64q-18 36-36 0v-8q-18-27-36 0v26q-18 38-36 0V44H124v22q-18 38-36 0V52q-18-27-36 0v20q-18 36-36 0Z" fill={secondary}/><path d="M35 1066q90-42 170 0t180 0t180 0t180 0" stroke={secondary} strokeWidth="8"/><g stroke={secondary} strokeWidth="2" opacity=".55">{Array.from({length:12},(_,i)=><path key={i} d={`M748 ${140+i*70}l20-12 20 12v24l-20 12-20-12Z`}/>)}</g></>}
       {garden && <><path d="M16 1065Q110 1012 224 1064T440 1060T778 1050V1107H16Z" fill={secondary}/><g stroke={accent} strokeWidth="2" opacity=".5">{[42,75,700,746].map((x,i)=><path key={x} d={`M${x} 1090q-10-34 ${i%2?10:-8}-63m${i%2?-10:8} 30q-30-10-20-27m20 27q23-20 25-7`}/>)}</g></>}

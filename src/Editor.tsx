@@ -26,6 +26,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { backgrounds, componentCatalog, templates } from "./data";
+import { fontOptions, fontFor } from "./fonts";
 import { BirchLogo, ComponentIcon } from "./icons";
 import { Artwork } from "./Artwork";
 import { PageScenery } from "./PageScenery";
@@ -84,7 +85,7 @@ function WelcomeCard() {
         </span>
         <span>
           <Palette size={14} />
-          20 种背景
+          {backgrounds.length} 种背景
         </span>
         <span className="welcome-spark">✧</span>
       </div>
@@ -773,7 +774,7 @@ export default function Editor({
                 <div className="style-section-title">
                   <ImagePlus size={16} />
                   <h3>纸张背景</h3>
-                  <span>20 种预设</span>
+                  <span>{backgrounds.length} 种预设</span>
                 </div>
                 <div className="background-grid">
                   <button className={`background-option template-background ${data.background === "template" ? "selected" : ""}`} onClick={() => setField("background", "template")} aria-label="背景：跟随模板" aria-pressed={data.background === "template"}>
@@ -809,23 +810,21 @@ export default function Editor({
                   <h3>字体与排版</h3>
                 </div>
                 <div className="font-options">
-                  {(
-                    [
-                      { value: "sans", label: "现代无衬线", sample: "Aa" },
-                      { value: "serif", label: "经典衬线", sample: "Aa" },
-                      { value: "mono", label: "理性等宽", sample: "Aa" },
-                    ] as const
-                  ).map((f) => (
+                  {fontOptions.map((f) => (
                     <button
                       className={`${data.font === f.value ? "selected" : ""} font-${f.value}`}
                       key={f.value}
+                      title={`${f.label} · ${f.note}`}
+                      aria-pressed={data.font === f.value}
                       onClick={() => setField("font", f.value)}
                     >
-                      <b>{f.sample}</b>
+                      <b aria-hidden="true" style={data.font === f.value ? { fontFamily: fontFor(data.font).css } : undefined}>{f.value === "sans" || f.value === "serif" || f.value === "mono" ? "Aa" : "简历"}</b>
                       <span>{f.label}</span>
+                      <small>{f.note}</small>
                     </button>
                   ))}
                 </div>
+                <p className="font-license-note">新增 10 款中文字体均采用 SIL OFL 1.1 开源许可，可用于商业设计。字体按需从本站载入，无第三方 CDN。<a href={`${import.meta.env.BASE_URL}font-licenses.txt`} target="_blank" rel="noreferrer">查看字体许可</a></p>
                 <RangeControl
                   label="正文字号（同步所有文字组件）"
                   value={data.fontSize}

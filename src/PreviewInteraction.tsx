@@ -143,6 +143,7 @@ export function usePreviewDrag({ data, onCommit, onEdit, surface = "preview" }: 
       document.removeEventListener("pointermove", move);
       document.removeEventListener("pointerup", up);
       document.removeEventListener("pointercancel", cancel);
+      document.removeEventListener("pointerdown", secondPointer);
       document.removeEventListener("keydown", key);
       window.removeEventListener("blur", cancel);
       floating?.remove();
@@ -158,10 +159,12 @@ export function usePreviewDrag({ data, onCommit, onEdit, surface = "preview" }: 
       else if (!started) callbacks.current.onEdit?.(original);
     };
     const cancel = () => cleanup();
+    const secondPointer = (e: PointerEvent) => { if (e.pointerType === "touch" && e.pointerId !== pointerId) cleanup(); };
     const key = (e: KeyboardEvent) => { if (e.key === "Escape") { e.preventDefault(); cleanup(); } };
     document.addEventListener("pointermove", move, { passive: false });
     document.addEventListener("pointerup", up);
     document.addEventListener("pointercancel", cancel);
+    document.addEventListener("pointerdown", secondPointer);
     document.addEventListener("keydown", key);
     window.addEventListener("blur", cancel);
     frame = requestAnimationFrame(tick);

@@ -111,12 +111,12 @@ test("personal details persist, undo/redo work, photo uploads and changes shape"
   );
 });
 
-test("74 designs plus a blank template and template-following backgrounds apply and filter correctly", async ({
+test("104 designs plus a blank template and template-following backgrounds apply and filter correctly", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("tab", { name: "模板", exact: true }).click();
-  await expect(page.locator(".template-option")).toHaveCount(75);
+  await expect(page.locator(".template-option")).toHaveCount(105);
   await page
     .getByRole("button", { name: "午夜 Midnight 模板", exact: true })
     .click();
@@ -127,9 +127,9 @@ test("74 designs plus a blank template and template-following backgrounds apply 
     .locator(".filter-tabs")
     .getByRole("button", { name: "创意" })
     .click();
-  await expect(page.locator(".template-option")).toHaveCount(10);
+  await expect(page.locator(".template-option")).toHaveCount(17);
   await page.getByRole("tab", { name: "样式", exact: true }).click();
-  await expect(page.locator(".background-option")).toHaveCount(21);
+  await expect(page.locator(".background-option")).toHaveCount(41);
   await page.getByRole("button", { name: "背景：晨曦", exact: true }).click();
   await expect(page.locator(".resume-page").first()).toHaveCSS(
     "background-image",
@@ -204,12 +204,12 @@ test("mobile navigation, no horizontal viewport overflow, and PDF export downloa
     .locator(".mobile-nav")
     .getByRole("button", { name: "模板", exact: true })
     .click();
-  await expect(page.locator(".template-option")).toHaveCount(75);
+  await expect(page.locator(".template-option")).toHaveCount(105);
   await page
     .locator(".mobile-nav")
     .getByRole("button", { name: "样式", exact: true })
     .click();
-  await expect(page.locator(".background-option")).toHaveCount(21);
+  await expect(page.locator(".background-option")).toHaveCount(41);
   await page
     .locator(".mobile-nav")
     .getByRole("button", { name: "预览", exact: true })
@@ -225,7 +225,7 @@ test("mobile navigation, no horizontal viewport overflow, and PDF export downloa
     fullPage: true,
   });
   const pageCount = await page.locator(".resume-page").count();
-  await page.getByRole("button", { name: "导出 PDF", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: /^开始导出/ }).click();
   const download = await downloadPromise;

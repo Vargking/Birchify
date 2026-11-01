@@ -6,6 +6,8 @@ import {
   type Template,
 } from "./types";
 
+import { extraTemplates, extraBackgrounds } from "./expansion";
+
 export const templates: Template[] = [
   {
     id: "birch",
@@ -507,7 +509,7 @@ templates.push(
 );
 
 export const blankTemplate: Template = { id: "blank", name: "空白画布", english: "Blank Canvas", color: "#335e4c", category: "minimal", layout: "classic", font: "sans" };
-templates.push(blankTemplate);
+templates.push(...extraTemplates, blankTemplate);
 
 export function createBlankResume(current?: ResumeData): ResumeData {
   const base = current || createDefaultResume();
@@ -515,6 +517,7 @@ export function createBlankResume(current?: ResumeData): ResumeData {
 }
 
 export const backgrounds = [
+  ...extraBackgrounds,
   { id: "paper", name: "纯净白", value: "#ffffff" },
   { id: "ivory", name: "象牙白", value: "#fbfaf5" },
   { id: "mist", name: "薄雾灰", value: "#f5f6f7" },
@@ -760,6 +763,7 @@ export function createDefaultResume(): ResumeData {
     lineHeight: 1.65,
     pagePadding: 48,
     exportSettings: {
+      format: "pdf",
       watermark: true,
       pageNumbers: true,
       background: true,

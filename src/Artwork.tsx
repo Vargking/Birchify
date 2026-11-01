@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { Motif } from "./types";
 import { AnimalDrawing, isCuteAnimal } from "./CuteAnimals";
+import { NewAnimalDrawing, isNewAnimal } from "./NewAnimals";
 
 // All shapes are original local vector drawings. No character assets or remote images.
 export function Artwork({
@@ -15,6 +16,7 @@ export function Artwork({
   style?: CSSProperties;
 }) {
   if (isCuteAnimal(motif)) return <svg width={size} height={size} viewBox="0 0 160 160" fill="none" className={`original-art art-${motif} ${className}`} style={style} aria-hidden="true"><AnimalDrawing motif={motif}/></svg>;
+  if (isNewAnimal(motif)) return <svg width={size} height={size} viewBox="0 0 160 160" fill="none" className={`original-art art-${motif} ${className}`} style={style} aria-hidden="true"><NewAnimalDrawing motif={motif}/></svg>;
   const face = (
     <>
       <ellipse cx="65" cy="83" rx="3" ry="4" fill="#66564c" />

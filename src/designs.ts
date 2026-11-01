@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { extraDesigns } from "./expansion";
 
 export interface ResumeDesign {
   flow: "single" | "equal" | "left" | "right" | "triple";
@@ -17,6 +18,7 @@ const d = (flow: ResumeDesign["flow"], header: string, panel: string, heading: s
 // Each entry is an art direction, not a palette preset. These recipes are shared
 // by the actual A4 pages, their measurement copies and the template thumbnails.
 export const designs: Record<string, ResumeDesign> = {
+  ...extraDesigns,
   birch: d("single", "plain", "open", "line", "clean", "舒展单栏 · 植物留白 · 细线标题"),
   editorial: d("equal", "poster", "rule", "index", "news", "报刊双栏 · 巨幅姓名 · 数字索引"),
   sage: d("left", "profile", "bubble", "pill", "soft", "窄左宽右 · 柔软档案卡 · 胶囊标题"),

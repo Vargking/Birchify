@@ -50,6 +50,9 @@ import ExportDialog from "./ExportDialog";
 import PreviewEditorDialog, { type EditingTarget } from "./PreviewEditorDialog";
 import { iconLibrary } from "./IconLibrary";
 import { uid, type ResumeData, type UpdateResume } from "./types";
+import { usePreviewZoom } from "./usePreviewZoom";
+import Onboarding, { needsTour, TOUR_KEY } from "./Onboarding";
+import { fontOptions, loadFont } from "./fonts";
 
 const STORAGE_KEY = "birchify-resume-v1";
 
@@ -102,13 +105,14 @@ function validateResume(input: unknown): ResumeData {
       ? String(raw.background)
       : base.background,
     accent: color(raw.accent, base.accent),
-    font: ["sans", "serif", "mono"].includes(String(raw.font))
+    font: fontOptions.some(f => f.value === raw.font)
       ? (raw.font as ResumeData["font"])
       : "sans",
     fontSize: number(raw.fontSize, 14, 10, 20),
     lineHeight: number(raw.lineHeight, 1.65, 1.3, 2.3),
     pagePadding: number(raw.pagePadding, 48, 32, 80),
     exportSettings: {
+      format: settings.format === "docx" ? "docx" : "pdf",
       watermark: settings.watermark !== false,
       pageNumbers: settings.pageNumbers !== false,
       background: settings.background !== false,
@@ -203,6 +207,8 @@ export default function App() {
     null,
   );
   const [previewEditable, setPreviewEditable] = useState(true);
+  const [layoutMode, setLayoutMode] = useState(false);
+  const [showTour, setShowTour] = useState(needsTour);
   const [menuOpen, setMenuOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -228,6 +234,12 @@ export default function App() {
       })),
     [],
   );
+
+  useEffect(() => {
+    let active = true;
+    loadFont(data.font, [data.name, data.role, ...data.sections.flatMap(s => [s.title, ...s.components.flatMap(c => [c.title,c.subtitle,c.description])])].join(" ")).catch(() => { if (active) toast("字体载入失败，请重试或选择系统字体"); });
+    return () => { active = false; };
+  }, [data.font, data.name, data.role, data.sections, toast]);
   const undo = useCallback(
     () =>
       setHistory((h) =>
@@ -338,9 +350,16 @@ export default function App() {
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
     try {
-      const { exportPDF } = await import("./pdf");
-      await exportPDF(data.name, data.exportSettings, currentPage, setProgress);
-      toast("PDF 已导出。愿每一份经历，都被看见。");
+      if (data.exportSettings.format === "docx") {
+        const { exportWord } = await import("./word");
+        await exportWord(data, setProgress);
+        toast("可编辑 Word 已导出，使用 Word / WPS 继续编辑");
+      } else {
+        await loadFont(data.font, document.querySelector(".resume-pages")?.textContent || data.name);
+        const { exportPDF } = await import("./pdf");
+        await exportPDF(data.name, data.exportSettings, currentPage, setProgress);
+        toast("PDF 已导出。愿每一份经历，都被看见。");
+      }
     } catch (error) {
       toast(error instanceof Error ? error.message : "导出失败，请重试");
     } finally {
@@ -363,6 +382,8 @@ export default function App() {
   };
 
   const scale = zoom ?? fitScale;
+  usePreviewZoom(previewRef, scale, setZoom);
+  const closeTour = () => { setShowTour(false); try { localStorage.setItem(TOUR_KEY, "seen"); } catch { /* Storage may be unavailable. */ } };
   const pageChanged = useCallback((count: number) => {
     setPageCount(count);
     setCurrentPage((current) => Math.min(current, count));
@@ -457,7 +478,7 @@ export default function App() {
             ) : (
               <ArrowDownToLine size={16} />
             )}
-            <span>导出 PDF</span>
+            <span>导出 PDF / Word</span>
             <span className="export-arrow">
               <ChevronDown size={13} />
             </span>
@@ -489,6 +510,7 @@ export default function App() {
                   导入简历备份
                 </button>
                 <div />
+                <button onClick={() => { setShowTour(true); setMenuOpen(false); }}><CircleHelp size={15}/>重新查看教程</button>
                 <button onClick={() => { setModal("blank"); setMenuOpen(false); }}><Plus size={15}/>从空白开始</button>
                 <button onClick={() => { setModal("example"); setMenuOpen(false); }}><Sparkles size={15}/>填入示例内容</button>
                 <button className="danger" onClick={() => { setModal("clear"); setMenuOpen(false); }}><Trash2 size={15}/>清空当前简历</button>
@@ -563,6 +585,7 @@ export default function App() {
               </span>
             </div>
             <div className="preview-toolbar-right">
+              <button className={`arrange-button ${layoutMode ? "active" : ""}`} aria-pressed={layoutMode} onClick={() => { setLayoutMode(!layoutMode); setPreviewEditable(true); }}>{layoutMode ? "完成排版" : "排版"}</button>
               <button
                 className={`preview-mode-button ${previewEditable ? "active" : ""}`}
                 aria-pressed={previewEditable}
@@ -597,7 +620,7 @@ export default function App() {
             }}
           >
             <div className="preview-intro">
-              <span>点按编辑 · 拖动「栏目」或组件手柄，实时排版</span>
+              <span>{layoutMode ? "选中栏目或组件，再拖动手柄 · 双指缩放" : "点按内容编辑 · 双指缩放 · 开启排版以拖动"}</span>
               <span>
                 <Leaf size={13} />
                 YOUR NEXT CHAPTER
@@ -624,6 +647,7 @@ export default function App() {
                   data={editorDraft || data}
                   onPageCount={pageChanged}
                   editable={previewEditable && !exporting}
+                  layoutMode={layoutMode}
                   onEdit={setEditingTarget}
                   onCommit={commitLayout}
                   onAddSection={addSection}
@@ -662,9 +686,9 @@ export default function App() {
               </button>
               <IconButton
                 label="放大预览"
-                disabled={scale >= 1.5}
+                disabled={scale >= 2}
                 onClick={() =>
-                  setZoom(Math.min(1.5, Math.round((scale + 0.1) * 100) / 100))
+                  setZoom(Math.min(2, Math.round((scale + 0.1) * 100) / 100))
                 }
               >
                 <Plus size={15} />
@@ -718,6 +742,7 @@ export default function App() {
           </button>
         ))}
       </nav>
+      {showTour && <Onboarding onClose={closeTour}/>}
       {componentTarget && (
         <Modal
           title="给简历，加一点可能"
@@ -802,9 +827,9 @@ export default function App() {
               <div>
                 <h3>模板是起点，组件是可能</h3>
                 <p>
-                  {templates.length - 1} 款设计模板（含 {templates.filter(t => t.motif).length} 款整页原创卡通）和空白画布、20 种纸张背景、103
+                  {templates.length - 1} 款设计模板（含 {templates.filter(t => t.motif).length} 款整页原创卡通）和空白画布、{backgrounds.length} 种纸张背景、103
                   款组件图标；每栏可自由添加文本、时间线、技能进度、图片等 10
-                  类组件。预览和编辑栏均可拖动栏目；组件跟随鼠标或手指实时排序、跨栏目移动或横向缩进。拖动按 Escape 可取消，松手后可一次撤销。清空和从空白开始前均会确认，也可撤销恢复。
+                  类组件。手机预览支持双指缩放，进入“排版”后点选内容即可显示拖动工具。预览和编辑栏均可拖动栏目；组件跟随鼠标或手指实时排序、跨栏目移动或横向缩进。拖动按 Escape 可取消，松手后可一次撤销。清空和从空白开始前均会确认，也可撤销恢复。
                 </p>
               </div>
             </div>
@@ -815,7 +840,7 @@ export default function App() {
                 <p>
                   内容会自动分页，并在页底标注页码。PDF 按 A4
                   尺寸导出，可设置品牌水印、页码、背景、清晰度和导出范围。PDF
-                  使用高清图像渲染，文字不支持选取。
+                  使用高清图像渲染，文字不支持选取。也可导出 Word，保留可编辑文字、照片和链接，采用单栏自动分页；复杂装饰与网页排版不保留。
                 </p>
               </div>
             </div>
@@ -909,7 +934,7 @@ export default function App() {
               <span className="export-orbit" />
             </div>
             <h2>为你的下一站，准备就绪。</h2>
-            <p>正在生成高清 A4 简历 · {pageCount} 页</p>
+            <p>{data.exportSettings.format === "docx" ? "正在生成可编辑 Word · 全部内容" : `正在生成高清 A4 简历 · ${data.exportSettings.pages === "current" ? "当前页" : `${pageCount} 页`}`}</p>
             <div className="export-progress">
               <span style={{ width: `${progress}%` }} />
             </div>

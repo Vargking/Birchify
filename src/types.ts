@@ -52,7 +52,7 @@ export interface ResumeData {
   template: string;
   background: string;
   accent: string;
-  font: "sans" | "serif" | "mono";
+  font: "sans" | "serif" | "mono" | "wenkai" | "noto-sans" | "noto-serif" | "mashan" | "zhimang" | "kuaile" | "xiaowei" | "huangyou" | "liujian" | "longcang";
   fontSize: number;
   lineHeight: number;
   pagePadding: number;
@@ -61,6 +61,7 @@ export interface ResumeData {
 }
 
 export interface ExportSettings {
+  format: "pdf" | "docx";
   watermark: boolean;
   pageNumbers: boolean;
   background: boolean;
@@ -83,7 +84,8 @@ export type Motif = AnimalMotif
   | "moon"
   | "planet"
   | "leaf";
-export type AnimalMotif = "cat" | "dog" | "panda" | "red-panda" | "hamster" | "pig" | "raccoon" | "tiger" | "lion" | "frog" | "sheep" | "otter" | "penguin" | "duck" | "deer" | "koala" | "hedgehog" | "squirrel" | "seal" | "capybara" | "elephant" | "alpaca" | "turtle" | "chinchilla" | "cow" | "peacock";
+export type NewAnimalMotif = "sloth" | "owl" | "dolphin" | "whale" | "axolotl" | "bat" | "giraffe" | "hippo" | "platypus" | "ferret";
+export type AnimalMotif = NewAnimalMotif | "cat" | "dog" | "panda" | "red-panda" | "hamster" | "pig" | "raccoon" | "tiger" | "lion" | "frog" | "sheep" | "otter" | "penguin" | "duck" | "deer" | "koala" | "hedgehog" | "squirrel" | "seal" | "capybara" | "elephant" | "alpaca" | "turtle" | "chinchilla" | "cow" | "peacock";
 
 export interface Template {
   id: string;

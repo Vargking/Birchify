@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: "./tests",
   timeout: 90000,
   use: {
+    storageState: {cookies:[],origins:[{origin:"http://localhost:5173",localStorage:[{name:"birchify-tour-v2",value:"seen"}]}]},
     actionTimeout: 10000,
     baseURL: "http://localhost:5173",
     launchOptions: {

@@ -11,14 +11,10 @@ import { Artwork } from "./Artwork";
 import { DecorationIcon } from "./IconLibrary";
 import type { ResumeComponent, ResumeData } from "./types";
 import { designVariables, designFor } from "./designs";
+import { fontFor } from "./fonts";
 
 export const PAGE_WIDTH = 794;
 export const PAGE_HEIGHT = 1123;
-const fonts = {
-  sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif',
-  serif: 'Georgia, "Noto Serif SC", "Songti SC", SimSun, serif',
-  mono: '"SFMono-Regular", Consolas, "Microsoft YaHei", monospace',
-};
 
 export function resumeStyle(data: ResumeData): CSSProperties {
   const cartoon = templates.find(t => t.id === data.template)?.motif;
@@ -30,7 +26,7 @@ export function resumeStyle(data: ResumeData): CSSProperties {
     "--resume-padding": `${data.pagePadding}px`,
     fontFamily: cartoon && data.font === "sans"
       ? '"Chalkboard SE", "Comic Sans MS", "YouYuan", "Microsoft YaHei", sans-serif'
-      : fonts[data.font],
+      : fontFor(data.font).css,
     background: data.exportSettings.background
       ? (data.background === "template" ? designFor(data.template).paper : undefined) || backgrounds.find((b) => b.id === data.background)?.value || "#fff"
       : "#fff",

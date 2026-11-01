@@ -67,7 +67,7 @@ test("103 icons, original cartoon search, styling and preview dialogs persist", 
   await expect(page.locator(".resume-page h1")).toContainText("许星禾");
 });
 
-test("74 distinct designs, blank canvas and all 42 cartoons render within page bounds", async ({
+test("104 distinct designs, blank canvas and all 52 cartoons render within page bounds", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -79,7 +79,7 @@ test("74 distinct designs, blank canvas and all 42 cartoons render within page b
     .evaluateAll((options) =>
       options.map((o) => o.getAttribute("aria-label")!),
     );
-  expect(names).toHaveLength(75);
+  expect(names).toHaveLength(105);
   for (const name of names) {
     await page.getByRole("button", { name, exact: true }).click();
     await expect(page.locator(".preview-template")).toContainText(
@@ -102,7 +102,7 @@ test("74 distinct designs, blank canvas and all 42 cartoons render within page b
     .locator(".filter-tabs")
     .getByRole("button", { name: "原创卡通", exact: true })
     .click();
-  await expect(page.locator(".template-option")).toHaveCount(42);
+  await expect(page.locator(".template-option")).toHaveCount(52);
   await page
     .getByRole("button", { name: "栖栖猫来信 A Cat Letter 模板", exact: true })
     .click();
@@ -189,6 +189,8 @@ test("mobile touch editing and pointer dragging, readable inputs and no horizont
     .locator('.resume-page [data-edit-section="experience"]')
     .first();
   const sourceId = await source.getAttribute("data-edit-unit");
+  await page.getByRole("button", { name: "排版", exact: true }).click();
+  await source.locator(".component-edit-target").click();
   const target = page
     .locator('.resume-page [data-edit-section="experience"]')
     .nth(1);
@@ -230,6 +232,7 @@ test("mobile touch editing and pointer dragging, readable inputs and no horizont
   await expect(
     page.locator('.resume-page [data-edit-section="experience"]').last(),
   ).toHaveAttribute("data-edit-unit", sourceId!);
+  await page.getByRole("button", { name: "完成排版", exact: true }).click();
   await page
     .getByRole("button", { name: "编辑组件：资深产品设计师", exact: true })
     .click();
@@ -256,7 +259,7 @@ test("PDF preferences remove both watermarks and export chosen page, quality and
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "导出 PDF", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await dialog
     .getByRole("switch", { name: "Birchify 品牌水印", exact: true })
@@ -290,7 +293,7 @@ test("PDF preferences remove both watermarks and export chosen page, quality and
   expect(pdf).toContain("/Width 1191");
   await expect(page.locator(".save-status")).toContainText("已保存");
   await page.reload();
-  await page.getByRole("button", { name: "导出 PDF", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
   await expect(
     page.getByRole("switch", { name: "Birchify 品牌水印", exact: true }),
   ).toHaveAttribute("aria-checked", "false");

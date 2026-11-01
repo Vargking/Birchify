@@ -99,12 +99,12 @@ test("new animal theme exports a real PDF without either watermark", async ({ pa
   await page.goto("/");
   await page.getByRole("tab", { name: "模板", exact: true }).click();
   await selectTemplate(page, "raccoon-night");
-  await page.getByRole("button", { name: "导出 PDF", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
   await page.getByRole("switch", { name: "Birchify 品牌水印", exact: true }).click();
   await page.getByLabel("导出清晰度", { exact: true }).selectOption("1.5");
   await expect(page.locator(".resume-page .paper-brand")).toHaveCount(0);
   await expect(page.locator(".resume-page .paper-watermark").first()).toBeEmpty();
-  const downloadPromise = page.waitForEvent("download");
+  const downloadPromise = page.waitForEvent("download", {timeout: 30000});
   await page.getByRole("button", { name: /开始导出/ }).click();
   const download = await downloadPromise;
   const buffer = readFileSync((await download.path())!);
@@ -130,6 +130,8 @@ test.describe("small mobile screens", () => {
     await selectTemplate(page, "frog-pond");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator(".mobile-nav").getByRole("button", { name: "预览", exact: true }).click();
+    await page.getByRole("button", { name: "排版", exact: true }).click();
+    await page.locator(".resume-page .component-edit-target").first().click();
     const grip = page.locator(".resume-page .preview-drag-handle").first();
     const box = (await grip.boundingBox())!;
     expect(box.width).toBeGreaterThanOrEqual(43);

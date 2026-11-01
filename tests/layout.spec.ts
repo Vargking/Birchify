@@ -103,8 +103,8 @@ test("whole sections reorder live and Escape restores the original without creat
 
 test("designs have unique structure recipes and real columns and title rails", async ({ page }) => {
   const recipes = Object.entries(designs).filter(([id]) => id !== "blank").map(([,d]) => [d.flow,d.header,d.panel,d.heading,d.surface].join("/"));
-  expect(recipes).toHaveLength(74);
-  expect(new Set(recipes).size).toBe(74);
+  expect(recipes).toHaveLength(104);
+  expect(new Set(recipes).size).toBe(104);
   await page.goto("/");
   await page.getByRole("tab", { name: "模板", exact: true }).click();
   await page.getByRole("button", { name: "主编 Editorial 模板", exact: true }).click();
@@ -140,7 +140,9 @@ test.describe("native mobile touch", () => {
   test("preview touch continues after a component moves to another section, and supports section drag", async ({ page }) => {
     await page.goto("/");
     await page.locator(".mobile-nav").getByRole("button", { name: "预览", exact: true }).click();
+    await page.getByRole("button", {name:"排版",exact:true}).click();
     const source = page.locator('.resume-page [data-edit-section="experience"]').first();
+    await source.locator(".component-edit-target").click();
     const sourceId = await source.getAttribute("data-edit-unit");
     const handle = (await source.locator(".preview-drag-handle").boundingBox())!;
     expect(await page.evaluate(({x,y}) => document.elementFromPoint(x + 18, y + 18)?.closest("button")?.classList.contains("preview-drag-handle"), handle)).toBe(true);
@@ -163,6 +165,7 @@ test.describe("native mobile touch", () => {
     await expect(page.locator(".drag-content-preview")).toHaveCount(0);
     await mobileUndo(page);
     const about = page.locator('.resume-page [data-drag-section="about"]').first();
+    await about.locator(".resume-section-heading").click();
     const sectionHandle = (await about.locator(".preview-section-handle").boundingBox())!;
     const experience = (await page.locator('.resume-page [data-drag-section="experience"]').first().boundingBox())!;
     expect(sectionHandle.height).toBeGreaterThanOrEqual(43);
@@ -171,6 +174,7 @@ test.describe("native mobile touch", () => {
     await touch(session, "touchMove", experience.x + 70, experience.y + experience.height - 4);
     await expect.poll(() => previewOrder(page)).toEqual(["experience", "about", "education", "projects", "skills"]);
     await touch(session, "touchEnd");
+    await page.getByRole("button", {name:"完成排版",exact:true}).click();
     await page.getByRole("button", { name: "编辑栏目标题：关于我", exact: true }).click();
     await expect(page.getByRole("dialog").getByLabel("栏目名称", { exact: true })).toHaveCSS("font-size", "16px");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

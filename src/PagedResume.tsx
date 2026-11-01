@@ -37,8 +37,8 @@ function splitDescription(item: ResumeComponent, data: ResumeData, minWidth: num
   return chunks;
 }
 
-export default function PagedResume({ data: savedData, onPageCount, editable, onEdit, onCommit, onAddSection, onAddComponent }: {
-  data: ResumeData; onPageCount: (count: number) => void; editable: boolean;
+export default function PagedResume({ data: savedData, onPageCount, editable, layoutMode = false, onEdit, onCommit, onAddSection, onAddComponent }: {
+  data: ResumeData; onPageCount: (count: number) => void; editable: boolean; layoutMode?: boolean;
   onEdit: (target: EditingTarget) => void; onCommit: (next: ResumeData) => void;
   onAddSection: () => void; onAddComponent: (section: string) => void;
 }) {
@@ -46,6 +46,8 @@ export default function PagedResume({ data: savedData, onPageCount, editable, on
   const data = draft || savedData;
   const measureRef = useRef<HTMLDivElement>(null);
   const [pages, setPages] = useState<Page[]>([[[]]]);
+  const [selection, setSelection] = useState<{ section: string; component?: string } | null>(null);
+  const activate = (target: { section: string; component?: string }) => layoutMode ? setSelection(target) : onEdit(target);
   const template = templates.find(t => t.id === data.template) || templates[0];
   const classes = `resume-document ${designClasses(template.id, !!template.motif)}`;
   const weights = useMemo(() => columnWeights(template.id), [template.id]);
@@ -116,15 +118,15 @@ export default function PagedResume({ data: savedData, onPageCount, editable, on
   },[data,units,weights,onPageCount]);
 
   const body = (fragment: Fragment, interactive: boolean) => <>
-    {heading(fragment.section,fragment.index,fragment.continued,interactive && editable ? () => onEdit({ section: fragment.section.id }) : undefined)}
+    {heading(fragment.section,fragment.index,fragment.continued,interactive && editable ? () => activate({ section: fragment.section.id }) : undefined)}
     {interactive && editable && <div className="section-drag-tools" data-html2canvas-ignore="true">
       <button className="preview-section-handle" aria-label={`拖拽栏目：${fragment.section.title}`} title="拖动整个栏目" onPointerDown={e=>beginDrag(e,{section:fragment.section.id})}><GripVertical size={17}/><span>栏目</span></button>
       <button aria-label={`编辑栏目：${fragment.section.title}`} onClick={()=>onEdit({section:fragment.section.id})}><Pencil size={14}/></button>
       <button aria-label={`添加组件到：${fragment.section.title}`} onClick={()=>onAddComponent(fragment.section.id)}><Plus size={16}/></button>
     </div>}
     <div className="section-components">
-      {fragment.units.map(unit=> <div className={`resume-unit ${dragging?.component === unit.sourceId ? "drag-placeholder" : ""}`} key={unit.key} data-measure-unit={!interactive ? "true" : undefined} data-edit-unit={interactive && editable && unit.item ? unit.sourceId : undefined} data-edit-section={interactive && editable && unit.item ? unit.section.id : undefined}>
-        {unit.item ? <><div className="component-edit-target" role={interactive && editable ? "button" : undefined} tabIndex={interactive && editable ? 0 : undefined} aria-label={interactive && editable ? `编辑组件：${unit.item.title || unit.section.title}` : undefined} onClick={e=>{if(interactive && editable && !(e.target as HTMLElement).closest("a"))onEdit({section:unit.section.id,component:unit.sourceId});}} onKeyDown={e=>{if(interactive && editable && (e.key==="Enter"||e.key===" ")){e.preventDefault();onEdit({section:unit.section.id,component:unit.sourceId});}}}>
+      {fragment.units.map(unit=> <div className={`resume-unit ${selection?.component === unit.sourceId ? "layout-selected" : ""} ${dragging?.component === unit.sourceId ? "drag-placeholder" : ""}`} key={unit.key} data-measure-unit={!interactive ? "true" : undefined} data-edit-unit={interactive && editable && unit.item ? unit.sourceId : undefined} data-edit-section={interactive && editable && unit.item ? unit.section.id : undefined}>
+        {unit.item ? <><div className="component-edit-target" role={interactive && editable ? "button" : undefined} tabIndex={interactive && editable ? 0 : undefined} aria-label={interactive && editable ? `编辑组件：${unit.item.title || unit.section.title}` : undefined} onClick={e=>{if(interactive && editable && !(e.target as HTMLElement).closest("a"))activate({section:unit.section.id,component:unit.sourceId});}} onKeyDown={e=>{if(interactive && editable && (e.key==="Enter"||e.key===" ")){e.preventDefault();activate({section:unit.section.id,component:unit.sourceId});}}}>
           <ComponentContent item={unit.item} accent={data.accent}/>
         </div>
         {interactive && editable && <div className="preview-unit-tools" data-html2canvas-ignore="true"><button className="preview-drag-handle" aria-label={`拖拽组件：${unit.item.title||unit.section.title}`} title="拖动排序、跨栏目移动；横向拖动缩进" onPointerDown={e=>beginDrag(e,{section:unit.section.id,component:unit.sourceId})}><GripVertical size={17}/></button><button aria-label={`打开编辑：${unit.item.title||unit.section.title}`} onClick={()=>onEdit({section:unit.section.id,component:unit.sourceId})}><Pencil size={14}/></button></div>}</> : <div className="empty-section-space">{interactive && editable && <button data-html2canvas-ignore="true" onClick={()=>onAddComponent(unit.section.id)}><Plus size={16}/>添加第一个组件</button>}</div>}
@@ -132,7 +134,7 @@ export default function PagedResume({ data: savedData, onPageCount, editable, on
     </div>
   </>;
 
-  return <div className="resume-pages" data-drag-surface="preview" aria-label={dragging ? "正在实时拖拽排版，按 Escape 取消" : undefined}>
+  return <div className={`resume-pages ${layoutMode ? "layout-active" : ""}`} data-drag-surface="preview" aria-label={dragging ? "正在实时拖拽排版，按 Escape 取消" : undefined}>
     <div ref={measureRef} className={`resume-measure ${classes}`} style={resumeStyle(data)} aria-hidden="true">
       <Identity data={data}/>
       <div className="measure-columns">{widths.map((width,lane)=><div className={`measure-lane resume-column column-${lane}`} style={{width}} key={lane}>
@@ -148,7 +150,7 @@ export default function PagedResume({ data: savedData, onPageCount, editable, on
         {!units.length && editable && <div className="blank-canvas-hint" data-html2canvas-ignore="true"><span>一张白纸，无限可能</span><p>点按上方填写个人信息，添加栏目开始创作。</p><button className="secondary-button" onClick={onAddSection}><Plus size={17}/>添加第一个栏目</button></div>}
         <div className="resume-columns" style={{gridTemplateColumns:weights.map(w=>`${w}fr`).join(" ")}}>
           {page.map((fragments,lane)=><div className={`resume-column column-${lane}`} key={lane}>
-            {fragments.map(fragment=><section className={`resume-section-fragment ${dragging && !dragging.component && dragging.section===fragment.section.id?"drag-placeholder":""}`} key={fragment.section.id} data-drag-section={editable?fragment.section.id:undefined}>{body(fragment,true)}</section>)}
+            {fragments.map(fragment=><section className={`resume-section-fragment ${selection?.section === fragment.section.id && !selection.component ? "layout-selected" : ""} ${dragging && !dragging.component && dragging.section===fragment.section.id?"drag-placeholder":""}`} key={fragment.section.id} data-drag-section={editable?fragment.section.id:undefined}>{body(fragment,true)}</section>)}
           </div>)}
         </div>
       </div>
