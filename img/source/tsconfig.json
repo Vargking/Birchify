@@ -1,0 +1,4 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["posters.tsx", "../../src/vite-env.d.ts"]
+}

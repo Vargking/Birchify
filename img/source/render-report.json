@@ -1,0 +1,100 @@
+{
+  "size": "1080×1080",
+  "count": 9,
+  "externalResources": [],
+  "runtimeErrors": [],
+  "posters": [
+    {
+      "file": "01-hello-birchify.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 724837,
+      "sha256": "e745efd9033741db75358d84b488db5d70f211a6f06217286eae87d11e25f757",
+      "safeBounds": "passed",
+      "displayedResumePages": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "02-original-cute-templates.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 617893,
+      "sha256": "6a7572621a9d2dc3bc0b9a85138c1bb54345617efdf9336c4b53d76530bdb923",
+      "safeBounds": "passed",
+      "displayedResumePages": []
+    },
+    {
+      "file": "03-a-whole-cute-world.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 726150,
+      "sha256": "b5dfac87a706f99580509a9cedc9d67e5a26413d8dcd4672fe67730a036de4e7",
+      "safeBounds": "passed",
+      "displayedResumePages": [
+        1
+      ]
+    },
+    {
+      "file": "04-drag-and-make-it-yours.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 521434,
+      "sha256": "ecd391e91f8309cf5b9e3c51fff9f7d338b696f7ccfa0024d5ddb80906cfdb5d",
+      "safeBounds": "passed",
+      "displayedResumePages": []
+    },
+    {
+      "file": "05-build-your-own-story.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 577012,
+      "sha256": "9dcadb989705bbef06988f9206bc64bdeecca1b2e4a9e1805c77b23a68d983af",
+      "safeBounds": "passed",
+      "displayedResumePages": []
+    },
+    {
+      "file": "06-tap-edit-anywhere.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 674051,
+      "sha256": "aac16a96b7cf69bad862708bfd74c85a4c669973c2b7712fc51b9cc4da05e061",
+      "safeBounds": "passed",
+      "displayedResumePages": [
+        1
+      ]
+    },
+    {
+      "file": "07-colors-fonts-and-you.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 678812,
+      "sha256": "366a69e5accfc7ea3f0f1b365796475e0ee9daa33cf34c9a006703ad206231cd",
+      "safeBounds": "passed",
+      "displayedResumePages": [
+        1,
+        1
+      ]
+    },
+    {
+      "file": "08-free-and-ad-free.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 548350,
+      "sha256": "1b3226a1c70f3fec2c8a9ba2bd3e5a73b2836140923ccaa46f73a11fd2f8d4e0",
+      "safeBounds": "passed",
+      "displayedResumePages": []
+    },
+    {
+      "file": "09-your-next-chapter.png",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 654451,
+      "sha256": "8d8e77294c012647013a7f9bd31cf40d49bd2c1103429360496760b1d8f16c5b",
+      "safeBounds": "passed",
+      "displayedResumePages": []
+    }
+  ]
+}

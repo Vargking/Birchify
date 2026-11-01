@@ -1,73 +1,96 @@
-# Birchify
+<div align="center">
+  <img src="public/birchify.svg" width="88" height="88" alt="Birchify Logo" />
+  <h1>Birchify</h1>
+  <p><strong>简历，也可以可爱得很认真。</strong></p>
+  <p>原创卡通模板 · 自由拖拽编辑 · 完全免费 · 无广告</p>
+  <p><a href="https://birchify.vargking.cn"><strong>在线体验 ↗</strong></a> · <a href="https://github.com/Vargking/Birchify">GitHub 开源仓库</a></p>
+  <p>由 <a href="https://github.com/Vargking">Vargking</a> 打造的本地优先简历制作工具</p>
+</div>
 
-一个本地优先、注重设计与隐私的简历制作 Web App，由 **Vargking** 开发。
+Birchify 是一款无需注册、无需后端的简历制作 Web App。从清爽专业的求职简历，到整页卡通化的个性履历，你可以自由组合内容、拖拽调整排版，再导出分享。所有编辑与导出都在浏览器中完成。
 
-从简洁专业的求职简历，到整页原创插画的个性作品，Birchify 提供可组合的内容组件和实时 A4 预览。无需注册，也不需要后端服务。
+在线使用：**[birchify.vargking.cn](https://birchify.vargking.cn)**
 
-## 特性
+## 认识 Birchify
 
-- **丰富的整页设计**：104 款模板与空白画布，包含 52 款原创卡通设计；支持单栏、多栏及不同的栏目结构。
-- **自由组合内容**：文本、时间线、熟练度、标签、项目、链接、图片、引言、分隔线、留白共 10 类组件。可调整组件样式、颜色、字号、对齐、宽度、缩进和间距。
-- **个性化视觉**：40 种背景、103 款组件图标、个人照片，以及 10 款本地加载的开源中文字体。
-- **直观的编辑体验**：桌面双栏工作区，移动端底部导航；支持预览点按编辑、组件与栏目实时拖拽、双指缩放和放大后平移。
-- **多页简历**：自动分页、跨页续栏和页底页码，导出支持全部页面或当前页面。
-- **本地数据管理**：自动保存、撤销与重做、示例内容、清空简历，以及 JSON 备份导入与导出。
+九张图，看看一份简历可以有多少种可能。点击图片可查看原图。
 
-## 导出
+<table>
+  <tr>
+    <td width="33%"><a href="img/01-hello-birchify.png"><img src="img/01-hello-birchify.png" width="100%" alt="Birchify：简历也可以可爱得很认真，原创卡通模板与自由拖拽编辑" /></a></td>
+    <td width="33%"><a href="img/02-original-cute-templates.png"><img src="img/02-original-cute-templates.png" width="100%" alt="52 款原创卡通模板：猫咪、小狗、熊猫、小熊猫、仓鼠等求职搭子" /></a></td>
+    <td width="33%"><a href="img/03-a-whole-cute-world.png"><img src="img/03-a-whole-cute-world.png" width="100%" alt="不只是添加动物图标，页眉、栏目和背景都采用完整的卡通主题设计" /></a></td>
+  </tr>
+  <tr>
+    <td><a href="img/04-drag-and-make-it-yours.png"><img src="img/04-drag-and-make-it-yours.png" width="100%" alt="组件与栏目实时拖拽排版，支持鼠标和触摸操作" /></a></td>
+    <td><a href="img/05-build-your-own-story.png"><img src="img/05-build-your-own-story.png" width="100%" alt="时间线、技能进度条、个性标签与精选作品等组件自由组合" /></a></td>
+    <td><a href="img/06-tap-edit-anywhere.png"><img src="img/06-tap-edit-anywhere.png" width="100%" alt="手机点按内容即可弹窗编辑，并支持双指缩放查看细节" /></a></td>
+  </tr>
+  <tr>
+    <td><a href="img/07-colors-fonts-and-you.png"><img src="img/07-colors-fonts-and-you.png" width="100%" alt="自由调整颜色、背景、字体与组件样式，做出属于自己的简历" /></a></td>
+    <td><a href="img/08-free-and-ad-free.png"><img src="img/08-free-and-ad-free.png" width="100%" alt="完全免费、没有广告、无需注册，简历数据本地保存" /></a></td>
+    <td><a href="img/09-your-next-chapter.png"><img src="img/09-your-next-chapter.png" width="100%" alt="下一站，带上可爱的自己：Birchify 免费开源简历制作工具" /></a></td>
+  </tr>
+</table>
 
-PDF 和 Word 均支持文件名、品牌水印、页码、纸张背景、清晰度与页面范围设置。关闭品牌水印会同时移除首页的 Birchify Logo / 名称和页底品牌标识。
+以上宣传图由代码绘制，复用项目中的原创 SVG 角色、Logo 和真实简历组件。完整图片与可重新生成的源码见 [img/](img/)。
 
-| 格式 | 适用场景 | 编辑能力 |
+## 不止是换个颜色
+
+- **104 款模板与空白画布**：简约、专业、创意与卡通多种方向；其中 52 款原创卡通模板各有主题页眉、栏目设计、纸张氛围和场景装饰。
+- **排版跟着你走**：组件和整个栏目都能拖拽排序，预览实时跟随；点击内容即可弹窗编辑。支持组件跨栏目移动与横向缩进调整。
+- **内容自由组合**：文本、时间线、熟练度、标签、项目、链接、图片、引言、分隔线、留白共 10 类组件，可调整样式、颜色、字号、对齐、宽度、缩进与间距。
+- **把细节变成自己的风格**：40 种背景、103 款组件图标、10 款本地开源中文字体，以及可自定义形状的个人照片。
+- **电脑与手机都能用**：桌面双栏编辑与预览，移动端底部导航、双指缩放与放大后平移。精细排版推荐电脑，临时修改也可以在手机完成。
+- **不止一页**：自动分页、跨页续栏和底部页码；支持清空、恢复示例内容、撤销与重做、浏览器自动保存和 JSON 备份迁移。
+
+## 导出与备份
+
+导出支持文件名、品牌水印、页码、纸张背景、清晰度和页面范围设置。关闭品牌水印后，首页左上角的 Birchify Logo / 名称与页底品牌标识会一并移除。
+
+| 格式 | 适合什么 | 需要了解 |
 | --- | --- | --- |
-| PDF | 保留页面设计、分享与投递 | 图像型 PDF，文字不可选取 |
-| Word · 完整保真 | 在 Word 中保留完整视觉效果 | 每页以高清 PNG 嵌入，页面文字不可直接编辑 |
-| Word · 图文分层 | 保留图形与多栏布局，同时修改文字 | 文字为按行定位的原生文本框；图标、进度条、照片、背景和装饰合并为页面图像 |
-| JSON | 备份或迁移到其他设备 | 导入 Birchify 后继续编辑全部内容 |
+| PDF | 保留设计、分享与投递 | 图像型页面，文字不可选取 |
+| Word · 完整保真 | 保留图标、进度条、照片与整页装饰 | 每页以高清图片嵌入，页面内文字不可直接编辑 |
+| Word · 图文分层 | 保留视觉布局，同时修改文字 | 文字按行放入原生文本框；图形、背景和装饰保留为页面图像 |
+| JSON | 备份、迁移设备、继续创作 | 导入 Birchify 后可继续编辑全部内容 |
 
-图文分层 Word 使用预览的固定分页，不会随文字修改自动重新排版。字体未嵌入，其他设备上的字体替换和不同 Word / WPS 版本可能影响字距与位置；需要原样效果时请选择完整保真模式。图像型导出不适合要求可提取文字的 ATS 系统。
+图文分层 Word 沿用导出时的固定分页，修改文字后不会自动重新排版；字体未嵌入，不同设备或 Word / WPS 版本可能出现字距差异。需要原样效果时请选择完整保真模式。图像型导出不适合要求可提取文字的 ATS 简历解析系统。
 
-## 本地开发
+## 本地优先，数据留在浏览器
 
-建议使用 Node.js 22 LTS 与 npm。
+Birchify 不设置账号、广告、云同步或统计服务。简历与照片保存在当前浏览器的 `localStorage` 中，不上传至应用服务器；导出也由浏览器完成。
+
+浏览器存储并不等于永久备份。清除站点数据、使用隐私模式、更换浏览器或访问域名，都可能使原有简历不可用；存储空间也有容量限制。建议定期下载 JSON 备份，尤其是在迁移设备或上传较大照片之前。
+
+## 开发与自托管
+
+项目基于 React、TypeScript 和 Vite，建议使用 Node.js 22 LTS 与 npm。
 
 ```sh
 npm ci
 npm run dev
 ```
 
-按终端提示在浏览器中访问开发服务。依赖安装默认使用 npmmirror 镜像；字体、图标与插画随站点提供，应用运行时不依赖外部 CDN 或在线接口。
-
 ```sh
-npm run build    # 类型检查并构建到 dist/
-npm run preview  # 预览生产构建
+npm run build
+npm run preview
 ```
 
-项目使用 React、TypeScript 和 Vite，图标基于 Lucide 与原创 SVG，PDF 导出使用 html2canvas / jsPDF，Word 导出使用 docx。
+生产构建输出到 `dist/`，可托管于 GitHub Pages、Cloudflare Pages、Vercel 或其他静态站点服务，无需 Node.js 后端。
 
-## 部署
+仓库已提供 [GitHub Pages 自动部署工作流](.github/workflows/deploy.yml)：在仓库 **Settings → Pages** 中选择 **GitHub Actions** 作为发布源，推送到 `main` 后自动构建与发布。工作流根据 Pages 配置设置仓库子路径；其他静态托管服务的构建命令为 `npm run build`，输出目录为 `dist`。
 
-Birchify 是纯静态应用，可部署到 GitHub Pages、Cloudflare Pages、Vercel 或其他静态托管服务。
+依赖安装默认使用 npmmirror 镜像。字体、图标和插画均随站点提供，应用运行时不依赖外部 CDN 或在线接口。PDF 导出使用 html2canvas / jsPDF，Word 导出使用 docx，图标来自 Lucide 与项目原创 SVG。
 
-- 通用构建命令：`npm ci && npm run build`；输出目录：`dist`。
-- GitHub Pages：仓库已包含 [自动部署工作流](.github/workflows/deploy.yml)。在仓库 Settings → Pages 中选择 **GitHub Actions** 作为发布源，推送至 `main` 后自动构建与发布。工作流会处理仓库子路径。
-- 手动部署到子路径时，通过 Vite 的 `--base` 指定公开路径。
+## 参与改进
 
-无需部署 Node.js 后端。迁移域名前，建议在原站点导出 JSON 备份，再在新站点导入。
+欢迎通过 Issue 反馈问题或提交 Pull Request。反馈排版和导出问题时，请提供浏览器、屏幕尺寸、模板名称与复现步骤；分享截图或 JSON 文件前，请移除个人信息。
 
-## 数据与隐私
+自动化测试使用 Playwright，启动开发服务后运行 `npm test`。当前 [测试配置](playwright.config.ts) 使用 Windows 上的 Microsoft Edge，在其他环境运行时需调整浏览器路径。
 
-简历数据和照片保存在当前浏览器的 `localStorage` 中，不上传到服务器，没有账号、云同步或统计服务。导出也在浏览器内完成。
+## 许可证与致谢
 
-浏览器存储存在容量限制；清理站点数据、使用隐私模式、切换浏览器或域名可能导致无法访问原有简历。请定期下载 JSON 备份，尤其是在上传较大照片或迁移设备之前。
+代码采用 [MIT 许可证](LICENSE)，Copyright © 2026 Vargking。
 
-## 测试与贡献
-
-欢迎通过 Issue 报告问题，或提交 Pull Request。反馈排版问题时，请附上浏览器、屏幕尺寸、模板名称与复现步骤；分享截图或 JSON 前请移除个人信息。
-
-自动化测试使用 Playwright：启动开发服务后运行 `npm test`。当前配置使用 Windows 上的 Microsoft Edge；在其他环境运行时需调整 [Playwright 配置](playwright.config.ts) 中的浏览器路径。
-
-## 许可证
-
-项目代码采用 [MIT 许可证](LICENSE)，Copyright © 2026 Vargking。
-
-第三方依赖遵循各自许可证。随站点分发的 10 款中文字体采用 SIL Open Font License 1.1，版权与许可声明见 [字体许可证](public/font-licenses.txt)。原创角色与场景不使用知名 IP 形象。
+原创角色与场景由代码绘制，不使用知名 IP 形象。第三方依赖遵循各自许可证；随站点分发的 10 款中文字体采用 SIL Open Font License 1.1，版权与许可声明见 [字体许可证](public/font-licenses.txt)。
