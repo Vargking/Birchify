@@ -138,7 +138,7 @@ test("10 commercial-use fonts load from this origin with CJK glyphs and persist"
   expect(remote).toEqual([]);
 });
 
-test("real Word downloads contain editable text, images, hyperlinks, page fields and optional branding", async ({page}) => {
+test("real layered Word downloads contain editable text, graphics, hyperlinks and fixed preview pages", async ({page}) => {
   const data=createDefaultResume();
   const picture="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+y/2sAAAAASUVORK5CYII=";
   data.photo=picture;
@@ -151,8 +151,9 @@ test("real Word downloads contain editable text, images, hyperlinks, page fields
   await page.goto("/");
   await page.getByRole("button",{name:"导出 PDF / Word",exact:true}).click();
   await page.getByRole("button",{name:/Word \(\.docx\)/}).click();
-  await expect(page.getByRole("dialog")).toContainText("采用适合编辑的单栏排版");
-  await expect(page.getByLabel("导出清晰度",{exact:true})).toHaveCount(0);
+  await page.getByLabel("Word 导出方式",{exact:true}).selectOption("editable");
+  await expect(page.getByRole("dialog")).toContainText("按行定位的可编辑文本框");
+  await expect(page.getByLabel("导出清晰度",{exact:true})).toBeVisible();
   const pending=page.waitForEvent("download",{timeout:30000});
   await page.getByRole("button",{name:/开始导出/}).click();
   const download=await pending;
@@ -162,11 +163,12 @@ test("real Word downloads contain editable text, images, hyperlinks, page fields
   expect(xml).toContain("林予安"); expect(xml).toContain("作品集链接"); expect(xml).toContain("作品图片");
   expect(xml).not.toContain("不该导出的隐藏栏目");
   expect(xml.indexOf("关于我")).toBeLessThan(xml.indexOf("工作经历"));
-  expect(xml).toContain("w:pStyle"); expect(xml).toContain("w:drawing");
+  expect(xml).toContain("w:txbxContent"); expect(xml).toContain("w:drawing");
+  expect(xml).toContain('relativeFrom="page"');
   expect(files["word/_rels/document.xml.rels"]).toContain("https://example.com/portfolio");
   expect(Object.keys(files).some(k=>k.startsWith("word/media/"))).toBe(true);
-  const furniture=Object.entries(files).filter(([k])=>/word\/(header|footer)\d+\.xml$/.test(k)).map(([,v])=>v).join("");
-  expect(furniture).toContain("Birchify"); expect(furniture).toContain("PAGE"); expect(furniture).toContain("NUMPAGES");
+  // Brand/footer/graphics are in the page image, not a second lossy Word header.
+  expect(Object.keys(files).filter(k=>/word\/(header|footer)\d+\.xml$/.test(k))).toEqual([]);
   // Repeat through the actual mobile export controls, with both toggles disabled.
   await page.setViewportSize({width:390,height:844});
   await page.getByRole("button",{name:"导出 PDF / Word",exact:true}).click();
@@ -190,6 +192,7 @@ test("Word supports blank resumes, old settings, long multiline content and CJK 
     const {buildWordBlob}=await import(/* @vite-ignore */ "/src/word.ts");
     const data=JSON.parse(localStorage.getItem("birchify-resume-v1")!);
     data.font="wenkai"; data.exportSettings.watermark=false;
+    data.exportSettings.wordMode="editable";
     data.sections[0].components[0].description=Array.from({length:200},(_,i)=>`第${i+1}段：研究与设计经验，保留所有可编辑文字。`).join("\n");
     const long=await buildWordBlob(data);
     const url=URL.createObjectURL(long),a=document.createElement("a"); a.href=url;a.download="long-resume.docx";a.click();
@@ -204,5 +207,7 @@ test("Word supports blank resumes, old settings, long multiline content and CJK 
   const xml=files["word/document.xml"] as string;
   expect(xml).toContain("第200段");
   expect(xml).toContain('w:eastAsia="LXGW WenKai"');
-  expect((xml.match(/<w:keepNext w:val="false"/g)||[]).length).toBeGreaterThanOrEqual(200);
+  expect((xml.match(/<w:txbxContent>/g)||[]).length).toBeGreaterThanOrEqual(200);
+  expect((xml.match(/<w:pageBreakBefore\//g)||[]).length).toBeGreaterThan(1);
+  await expect(page.locator("[data-export-host]")).toHaveCount(0);
 });

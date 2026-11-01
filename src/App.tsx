@@ -113,6 +113,7 @@ function validateResume(input: unknown): ResumeData {
     pagePadding: number(raw.pagePadding, 48, 32, 80),
     exportSettings: {
       format: settings.format === "docx" ? "docx" : "pdf",
+      wordMode: settings.wordMode === "editable" ? "editable" : "faithful",
       watermark: settings.watermark !== false,
       pageNumbers: settings.pageNumbers !== false,
       background: settings.background !== false,
@@ -352,8 +353,8 @@ export default function App() {
     try {
       if (data.exportSettings.format === "docx") {
         const { exportWord } = await import("./word");
-        await exportWord(data, setProgress);
-        toast("可编辑 Word 已导出，使用 Word / WPS 继续编辑");
+        await exportWord(data, setProgress, currentPage);
+        toast(data.exportSettings.wordMode === "editable" ? "图文分层 Word 已导出，文字可在文本框中编辑" : "完整保真 Word 已导出，保留整页设计与全部组件");
       } else {
         await loadFont(data.font, document.querySelector(".resume-pages")?.textContent || data.name);
         const { exportPDF } = await import("./pdf");
@@ -839,8 +840,8 @@ export default function App() {
                 <h3>多页，依然从容</h3>
                 <p>
                   内容会自动分页，并在页底标注页码。PDF 按 A4
-                  尺寸导出，可设置品牌水印、页码、背景、清晰度和导出范围。PDF
-                  使用高清图像渲染，文字不支持选取。也可导出 Word，保留可编辑文字、照片和链接，采用单栏自动分页；复杂装饰与网页排版不保留。
+                  尺寸导出，可设置品牌水印、页码、背景、清晰度和导出范围。
+                  PDF 使用高清图像渲染，文字不支持选取。Word 可选完整保真，逐页保留所有组件与页面设计；或选择图文分层，以可编辑文本框叠加图形层。图文分层保持预览分页，修改文字不会自动重新排版，字体与字距可能因 Word / WPS 版本而不同。
                 </p>
               </div>
             </div>
@@ -934,7 +935,7 @@ export default function App() {
               <span className="export-orbit" />
             </div>
             <h2>为你的下一站，准备就绪。</h2>
-            <p>{data.exportSettings.format === "docx" ? "正在生成可编辑 Word · 全部内容" : `正在生成高清 A4 简历 · ${data.exportSettings.pages === "current" ? "当前页" : `${pageCount} 页`}`}</p>
+            <p>{data.exportSettings.format === "docx" ? `正在生成${data.exportSettings.wordMode === "editable" ? "图文分层" : "完整保真"} Word` : "正在生成高清 A4 简历"} · {data.exportSettings.pages === "current" ? "当前页" : `${pageCount} 页`}</p>
             <div className="export-progress">
               <span style={{ width: `${progress}%` }} />
             </div>

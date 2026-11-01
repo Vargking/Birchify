@@ -764,6 +764,7 @@ export function createDefaultResume(): ResumeData {
     pagePadding: 48,
     exportSettings: {
       format: "pdf",
+      wordMode: "faithful",
       watermark: true,
       pageNumbers: true,
       background: true,

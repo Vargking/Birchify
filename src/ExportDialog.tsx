@@ -22,21 +22,29 @@ export default function ExportDialog({
   return (
     <Modal
       title="让下一站，看见你。"
-      subtitle="PDF 保留视觉效果，Word 方便继续编辑。全程本机处理。"
+      subtitle="保留你的整页设计，所有文件均在本机生成。"
       onClose={onClose}
     >
       <div className="export-settings">
         <div className="export-format-options" aria-label="导出格式">
           <button aria-pressed={settings.format === "pdf"} onClick={() => onChange({format:"pdf"})}>PDF<small>保留页面设计 · 便于投递</small></button>
-          <button aria-pressed={settings.format === "docx"} onClick={() => onChange({format:"docx"})}>Word (.docx)<small>原生可编辑文字、图片和链接</small></button>
+          <button aria-pressed={settings.format === "docx"} onClick={() => onChange({format:"docx"})}>Word (.docx)<small>完整保真 / 图文分层可编辑</small></button>
         </div>
+        {settings.format === "docx" && <label className="select-field">
+          Word 导出方式
+          <select aria-label="Word 导出方式" value={settings.wordMode || "faithful"}
+            onChange={e => onChange({wordMode: e.target.value as ExportSettings["wordMode"]})}>
+            <option value="faithful">完整保真 · 整页高清图像（推荐）</option>
+            <option value="editable">图文分层 · 文字可编辑，图形保留</option>
+          </select>
+        </label>}
         <div className="export-paper-summary">
           <span>
             <FileText size={25} />
           </span>
           <div>
-            <b>A4 · {settings.format === "docx" ? "可编辑 Word" : "高清 PDF"}</b>
-            <small>{settings.format === "docx" ? "全部内容 · 由 Word / WPS 自动分页" : `${pageCount} 页简历 · 全程本机处理`}</small>
+            <b>A4 · {settings.format === "docx" ? (settings.wordMode === "editable" ? "图文分层 Word" : "完整保真 Word") : "高清 PDF"}</b>
+            <small>{pageCount} 页简历 · 与预览相同的分页</small>
           </div>
           <ShieldCheck size={21} />
         </div>
@@ -61,12 +69,12 @@ export default function ExportDialog({
           />
           <SettingSwitch
             title="纸张背景"
-            description={settings.format === "docx" ? "Word 仅使用纯色底色；不保留网页渐变、纹理与场景装饰" : "关闭后使用纯白纸张，保留模板装饰和图标"}
+            description="关闭后使用纯白纸张，保留模板装饰和图标"
             checked={settings.background}
             onChange={(background) => onChange({ background })}
           />
         </div>
-        {settings.format === "pdf" && <><label className="select-field">
+        <label className="select-field">
           导出清晰度
           <select
             aria-label="导出清晰度"
@@ -95,15 +103,16 @@ export default function ExportDialog({
             <option value="current">仅当前第 {currentPage} 页</option>
           </select>
         </label>
-        </>}
-        {settings.format === "docx" ? <p className="word-format-note">Word 导出全部可见栏目，采用适合编辑的单栏排版，自动分页与页码。文字、照片、作品图和链接均可编辑；熟练度转为百分比，复杂卡通装饰、图标与网页排版不保留。字体不嵌入：电脑未安装所选字体时会回退。需要原样效果请使用 PDF。</p> : <p className="export-format-note">
+        {settings.format === "docx" ? <p className="word-format-note">{settings.wordMode === "editable"
+          ? "图文分层：保留页面背景、照片、图标、进度条与卡通装饰，文字使用按行定位的可编辑文本框，不再重排为单栏。图形合并为页面图像，不能逐个编辑；修改文字后不会自动重新分页。字体不嵌入，Word / WPS 的字体与字距可能有差异。要求原样效果请选择完整保真。"
+          : "完整保真：将实际预览逐页以高清 PNG 嵌入 Word，保留所有可见组件、图标、进度条、照片、多栏排版、背景与卡通装饰。此模式页面文字不可直接编辑；需要改字可选「图文分层」，或导出 JSON 备份后回到 Birchify 编辑。"}</p> : <p className="export-format-note">
           <Layers size={15} />
           PDF 为高清图像格式，文字不可选取；可同时下载 JSON 备份以便继续编辑。
         </p>}
         <button className="primary-button export-start" onClick={onExport}>
           <ArrowDownToLine size={17} />
           开始导出
-          {settings.format === "docx" ? " · Word 全部内容" : settings.pages === "all"
+          {settings.pages === "all"
             ? ` · ${pageCount} 页`
             : ` · 第 ${currentPage} 页`}
         </button>

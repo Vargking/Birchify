@@ -62,6 +62,7 @@ export interface ResumeData {
 
 export interface ExportSettings {
   format: "pdf" | "docx";
+  wordMode?: "faithful" | "editable";
   watermark: boolean;
   pageNumbers: boolean;
   background: boolean;

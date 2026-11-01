@@ -8,7 +8,7 @@ const steps = [
   { title: "你的经历，值得好好呈现。", text: "从示例开始，或选择空白画布。所有编辑自动保存在这台设备，不需要注册。", icon: ShieldCheck, label: "LOCAL & YOURS" },
   { title: "先挑风格，再写故事。", text: "在「模板」挑选整页设计，再到「样式」调整背景、字体和颜色。切换模板不会改动你的内容。", icon: Sparkles, label: "MAKE IT YOURS" },
   { title: "拉近一点，轻松排版。", text: "预览可双指缩放，放大后单指移动查看。点内容打开编辑；开启「排版」，选中组件或栏目，再拖动唯一出现的手柄。", icon: ZoomIn, label: "A LITTLE CLOSER" },
-  { title: "带着故事，走向下一站。", text: "PDF 保留网页视觉；Word 可继续编辑文字。导出前可关闭品牌水印。JSON 备份可以恢复到 Birchify 继续创作。", icon: Download, label: "READY FOR WHAT'S NEXT" },
+  { title: "带着故事，走向下一站。", text: "PDF 与 Word 完整保真保留页面设计；Word 图文分层可编辑文字。导出前可关闭品牌水印。JSON 备份可以恢复到 Birchify 继续创作。", icon: Download, label: "READY FOR WHAT'S NEXT" },
 ];
 export default function Onboarding({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0);
