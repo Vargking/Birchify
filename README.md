@@ -11,27 +11,27 @@ Birchify 是一款无需注册、无需后端的简历制作 Web App。从清爽
 
 在线使用：**[birchify.vargking.cn](https://birchify.vargking.cn)**
 
-## 认识 Birchify
+## 产品展示
 
-九张图，看看一份简历可以有多少种可能。点击图片可查看原图。
+从原创卡通模板到实时拖拽编辑，看看一份简历可以有多少种可能。
 
-<table>
-  <tr>
-    <td width="33%"><a href="img/01-hello-birchify.png"><img src="img/01-hello-birchify.png" width="100%" alt="Birchify：简历也可以可爱得很认真，原创卡通模板与自由拖拽编辑" /></a></td>
-    <td width="33%"><a href="img/02-original-cute-templates.png"><img src="img/02-original-cute-templates.png" width="100%" alt="52 款原创卡通模板：猫咪、小狗、熊猫、小熊猫、仓鼠等求职搭子" /></a></td>
-    <td width="33%"><a href="img/03-a-whole-cute-world.png"><img src="img/03-a-whole-cute-world.png" width="100%" alt="不只是添加动物图标，页眉、栏目和背景都采用完整的卡通主题设计" /></a></td>
-  </tr>
-  <tr>
-    <td><a href="img/04-drag-and-make-it-yours.png"><img src="img/04-drag-and-make-it-yours.png" width="100%" alt="组件与栏目实时拖拽排版，支持鼠标和触摸操作" /></a></td>
-    <td><a href="img/05-build-your-own-story.png"><img src="img/05-build-your-own-story.png" width="100%" alt="时间线、技能进度条、个性标签与精选作品等组件自由组合" /></a></td>
-    <td><a href="img/06-tap-edit-anywhere.png"><img src="img/06-tap-edit-anywhere.png" width="100%" alt="手机点按内容即可弹窗编辑，并支持双指缩放查看细节" /></a></td>
-  </tr>
-  <tr>
-    <td><a href="img/07-colors-fonts-and-you.png"><img src="img/07-colors-fonts-and-you.png" width="100%" alt="自由调整颜色、背景、字体与组件样式，做出属于自己的简历" /></a></td>
-    <td><a href="img/08-free-and-ad-free.png"><img src="img/08-free-and-ad-free.png" width="100%" alt="完全免费、没有广告、无需注册，简历数据本地保存" /></a></td>
-    <td><a href="img/09-your-next-chapter.png"><img src="img/09-your-next-chapter.png" width="100%" alt="下一站，带上可爱的自己：Birchify 免费开源简历制作工具" /></a></td>
-  </tr>
-</table>
+![Birchify：简历也可以可爱得很认真，原创卡通模板与自由拖拽编辑](img/01-hello-birchify.png)
+
+![52 款原创卡通模板：猫咪、小狗、熊猫、小熊猫、仓鼠等求职搭子](img/02-original-cute-templates.png)
+
+![不只是添加动物图标，页眉、栏目和背景都采用完整的卡通主题设计](img/03-a-whole-cute-world.png)
+
+![组件与栏目实时拖拽排版，支持鼠标和触摸操作](img/04-drag-and-make-it-yours.png)
+
+![时间线、技能进度条、个性标签与精选作品等组件自由组合](img/05-build-your-own-story.png)
+
+![手机点按内容即可弹窗编辑，并支持双指缩放查看细节](img/06-tap-edit-anywhere.png)
+
+![自由调整颜色、背景、字体与组件样式，做出属于自己的简历](img/07-colors-fonts-and-you.png)
+
+![完全免费、没有广告、无需注册，简历数据本地保存](img/08-free-and-ad-free.png)
+
+![下一站，带上可爱的自己：Birchify 免费开源简历制作工具](img/09-your-next-chapter.png)
 
 以上宣传图由代码绘制，复用项目中的原创 SVG 角色、Logo 和真实简历组件。完整图片与可重新生成的源码见 [img/](img/)。
 
