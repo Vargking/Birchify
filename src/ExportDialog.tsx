@@ -19,32 +19,25 @@ export default function ExportDialog({
   currentPage: number;
   name: string;
 }) {
+  const ats = settings.format === "ats";
   return (
     <Modal
       title="让下一站，看见你。"
-      subtitle="保留你的整页设计，所有文件均在本机生成。"
+      subtitle="选择保留设计，或为招聘系统生成易读文字。所有文件均在本机生成。"
       onClose={onClose}
     >
       <div className="export-settings">
         <div className="export-format-options" aria-label="导出格式">
-          <button aria-pressed={settings.format === "pdf"} onClick={() => onChange({format:"pdf"})}>PDF<small>保留页面设计 · 便于投递</small></button>
-          <button aria-pressed={settings.format === "docx"} onClick={() => onChange({format:"docx"})}>Word (.docx)<small>完整保真 / 图文分层可编辑</small></button>
+          <button aria-pressed={!ats} onClick={() => onChange({format:"pdf"})}>设计版 PDF<small>完整页面设计 · 高清图像</small></button>
+          <button aria-pressed={ats} onClick={() => onChange({format:"ats"})}>ATS 友好 PDF<small>单栏真实文字 · 可搜索复制</small></button>
         </div>
-        {settings.format === "docx" && <label className="select-field">
-          Word 导出方式
-          <select aria-label="Word 导出方式" value={settings.wordMode || "faithful"}
-            onChange={e => onChange({wordMode: e.target.value as ExportSettings["wordMode"]})}>
-            <option value="faithful">完整保真 · 整页高清图像（推荐）</option>
-            <option value="editable">图文分层 · 文字可编辑，图形保留</option>
-          </select>
-        </label>}
         <div className="export-paper-summary">
           <span>
             <FileText size={25} />
           </span>
           <div>
-            <b>A4 · {settings.format === "docx" ? (settings.wordMode === "editable" ? "图文分层 Word" : "完整保真 Word") : "高清 PDF"}</b>
-            <small>{pageCount} 页简历 · 与预览相同的分页</small>
+            <b>A4 · {ats ? "ATS 友好 PDF" : "高清 PDF"}</b>
+            <small>{ats ? "全部可见内容 · 单栏独立分页" : `${pageCount} 页简历 · 与预览相同的分页`}</small>
           </div>
           <ShieldCheck size={21} />
         </div>
@@ -52,9 +45,9 @@ export default function ExportDialog({
           label="导出文件名"
           value={settings.fileName}
           onChange={(fileName) => onChange({ fileName })}
-          placeholder={`${name || "我的简历"}_Birchify.${settings.format}`}
+          placeholder={`${name || "我的简历"}_${ats ? "ATS" : "Birchify"}.pdf`}
         />
-        <div className="export-switches">
+        {!ats && <><div className="export-switches">
           <SettingSwitch
             title="Birchify 品牌水印"
             description="关闭后移除左上角 Logo / 名称和右下角品牌标识"
@@ -102,17 +95,20 @@ export default function ExportDialog({
             <option value="all">全部 {pageCount} 页</option>
             <option value="current">仅当前第 {currentPage} 页</option>
           </select>
-        </label>
-        {settings.format === "docx" ? <p className="word-format-note">{settings.wordMode === "editable"
-          ? "图文分层：保留页面背景、照片、图标、进度条与卡通装饰，文字使用按行定位的可编辑文本框，不再重排为单栏。图形合并为页面图像，不能逐个编辑；修改文字后不会自动重新分页。字体不嵌入，Word / WPS 的字体与字距可能有差异。要求原样效果请选择完整保真。"
-          : "完整保真：将实际预览逐页以高清 PNG 嵌入 Word，保留所有可见组件、图标、进度条、照片、多栏排版、背景与卡通装饰。此模式页面文字不可直接编辑；需要改字可选「图文分层」，或导出 JSON 备份后回到 Birchify 编辑。"}</p> : <p className="export-format-note">
+        </label></>}
+        {ats ? <div className="ats-format-note">
+          <b>为内容识别，主动简化排版</b>
+          <p>按当前栏目与组件顺序导出全部可见内容。保留姓名、联系方式、经历、日期和链接；技能进度转为百分比，标签转为文本，图片组件只保留文字说明。</p>
+          <p>统一使用内嵌开源中文字体，黑字白底、单栏自动分页。不包含照片、图标、装饰、品牌水印和页脚；不沿用设计预览的当前页。图中信息请先补充为文字，隐藏栏目不会导出。</p>
+          <p>不同 ATS 的解析规则不同，无法保证所有系统的识别结果。原设计与设计版导出选项保持不变。</p>
+        </div> : <p className="export-format-note">
           <Layers size={15} />
           PDF 为高清图像格式，文字不可选取；可同时下载 JSON 备份以便继续编辑。
         </p>}
         <button className="primary-button export-start" onClick={onExport}>
           <ArrowDownToLine size={17} />
           开始导出
-          {settings.pages === "all"
+          {ats ? " · ATS 友好 PDF" : settings.pages === "all"
             ? ` · ${pageCount} 页`
             : ` · 第 ${currentPage} 页`}
         </button>

@@ -99,7 +99,7 @@ test("new animal theme exports a real PDF without either watermark", async ({ pa
   await page.goto("/");
   await page.getByRole("tab", { name: "模板", exact: true }).click();
   await selectTemplate(page, "raccoon-night");
-  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / ATS", exact: true }).click();
   await page.getByRole("switch", { name: "Birchify 品牌水印", exact: true }).click();
   await page.getByLabel("导出清晰度", { exact: true }).selectOption("1.5");
   await expect(page.locator(".resume-page .paper-brand")).toHaveCount(0);

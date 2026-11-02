@@ -41,7 +41,7 @@ export async function withExportPages<T>(data: ResumeData, action: (pages: HTMLE
   }
 }
 
-export async function captureResumePage(page: HTMLElement, quality: number, hideEditableText = false) {
+export async function captureResumePage(page: HTMLElement, quality: number) {
   return html2canvas(page, {
     scale: quality, width: PAPER_WIDTH, height: PAPER_HEIGHT,
     backgroundColor: "#fff", useCORS: true, logging: false,
@@ -71,16 +71,6 @@ export async function captureResumePage(page: HTMLElement, quality: number, hide
       clone.querySelectorAll(".preview-editable,.layout-selected,.preview-drop-before,.preview-drop-after").forEach(el => {
         el.classList.remove("preview-editable", "layout-selected", "preview-drop-before", "preview-drop-after");
       });
-      if (hideEditableText) {
-        // Only the exact measured text nodes are hidden. SVG/pseudo-element text,
-        // icons, photo, progress geometry and all decorations remain in the image.
-        clone.querySelectorAll<HTMLElement>("[data-word-text]").forEach(el => {
-          el.style.setProperty("color", "transparent", "important");
-          el.style.setProperty("-webkit-text-fill-color", "transparent", "important");
-          el.style.setProperty("text-shadow", "none", "important");
-          el.style.setProperty("text-decoration-color", "transparent", "important");
-        });
-      }
     },
   });
 }

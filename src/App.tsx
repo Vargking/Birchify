@@ -112,8 +112,7 @@ function validateResume(input: unknown): ResumeData {
     lineHeight: number(raw.lineHeight, 1.65, 1.3, 2.3),
     pagePadding: number(raw.pagePadding, 48, 32, 80),
     exportSettings: {
-      format: settings.format === "docx" ? "docx" : "pdf",
-      wordMode: settings.wordMode === "editable" ? "editable" : "faithful",
+      format: settings.format === "ats" ? "ats" : "pdf",
       watermark: settings.watermark !== false,
       pageNumbers: settings.pageNumbers !== false,
       background: settings.background !== false,
@@ -345,20 +344,19 @@ export default function App() {
     setEditingTarget(null);
     setExporting(true);
     setProgress(0);
-    // The preview stays mounted on mobile; reveal it before capturing its pages.
+    // Keep the completed resume visible while the independent exporter runs.
     setMobilePage("preview");
     await new Promise((resolve) =>
       requestAnimationFrame(() => requestAnimationFrame(resolve)),
     );
     try {
-      if (data.exportSettings.format === "docx") {
-        const { exportWord } = await import("./word");
-        await exportWord(data, setProgress, currentPage);
-        toast(data.exportSettings.wordMode === "editable" ? "图文分层 Word 已导出，文字可在文本框中编辑" : "完整保真 Word 已导出，保留整页设计与全部组件");
+      if (data.exportSettings.format === "ats") {
+        const { exportATS } = await import("./ats");
+        await exportATS(data, setProgress);
+        toast("ATS 友好 PDF 已导出，文字可选取、搜索与复制");
       } else {
-        await loadFont(data.font, document.querySelector(".resume-pages")?.textContent || data.name);
         const { exportPDF } = await import("./pdf");
-        await exportPDF(data.name, data.exportSettings, currentPage, setProgress);
+        await exportPDF(data, setProgress, currentPage);
         toast("PDF 已导出。愿每一份经历，都被看见。");
       }
     } catch (error) {
@@ -479,7 +477,7 @@ export default function App() {
             ) : (
               <ArrowDownToLine size={16} />
             )}
-            <span>导出 PDF / Word</span>
+            <span>导出 PDF / ATS</span>
             <span className="export-arrow">
               <ChevronDown size={13} />
             </span>
@@ -841,7 +839,7 @@ export default function App() {
                 <p>
                   内容会自动分页，并在页底标注页码。PDF 按 A4
                   尺寸导出，可设置品牌水印、页码、背景、清晰度和导出范围。
-                  PDF 使用高清图像渲染，文字不支持选取。Word 可选完整保真，逐页保留所有组件与页面设计；或选择图文分层，以可编辑文本框叠加图形层。图文分层保持预览分页，修改文字不会自动重新排版，字体与字距可能因 Word / WPS 版本而不同。
+                  设计版 PDF 使用高清图像保留整页外观，文字不可选取。ATS 友好 PDF 则按栏目顺序重新排为单栏，使用可选取、搜索与复制的真实文字，技能进度转为百分比；不含照片、图标、装饰背景、水印和页脚，导出全部可见内容并独立分页。不同招聘系统解析规则不同，不能保证所有 ATS 的识别结果。需要继续编辑，请下载 JSON 备份。
                 </p>
               </div>
             </div>
@@ -935,7 +933,7 @@ export default function App() {
               <span className="export-orbit" />
             </div>
             <h2>为你的下一站，准备就绪。</h2>
-            <p>{data.exportSettings.format === "docx" ? `正在生成${data.exportSettings.wordMode === "editable" ? "图文分层" : "完整保真"} Word` : "正在生成高清 A4 简历"} · {data.exportSettings.pages === "current" ? "当前页" : `${pageCount} 页`}</p>
+            <p>{data.exportSettings.format === "ats" ? "正在生成 ATS 友好 PDF · 全部可见内容，单栏重新分页" : `正在生成高清 A4 简历 · ${data.exportSettings.pages === "current" ? "当前页" : `${pageCount} 页`}`}</p>
             <div className="export-progress">
               <span style={{ width: `${progress}%` }} />
             </div>

@@ -64,7 +64,7 @@ for (const size of [
       if (step < 3) await dialog.getByRole("button", { name: "下一步", exact: true }).click();
     }
     await dialog.getByRole("button", { name: "开始创作", exact: true }).click();
-    await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
+    await page.getByRole("button", { name: "导出 PDF / ATS", exact: true }).click();
     const exporting = page.getByRole("dialog");
     await expect(exporting.getByRole("button", { name: /开始导出/ })).toBeAttached();
     expect(await exporting.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);

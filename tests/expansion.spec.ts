@@ -259,7 +259,7 @@ test("PDF preferences remove both watermarks and export chosen page, quality and
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / ATS", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await dialog
     .getByRole("switch", { name: "Birchify 品牌水印", exact: true })
@@ -293,7 +293,7 @@ test("PDF preferences remove both watermarks and export chosen page, quality and
   expect(pdf).toContain("/Width 1191");
   await expect(page.locator(".save-status")).toContainText("已保存");
   await page.reload();
-  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / ATS", exact: true }).click();
   await expect(
     page.getByRole("switch", { name: "Birchify 品牌水印", exact: true }),
   ).toHaveAttribute("aria-checked", "false");

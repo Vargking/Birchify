@@ -225,7 +225,7 @@ test("mobile navigation, no horizontal viewport overflow, and PDF export downloa
     fullPage: true,
   });
   const pageCount = await page.locator(".resume-page").count();
-  await page.getByRole("button", { name: "导出 PDF / Word", exact: true }).click();
+  await page.getByRole("button", { name: "导出 PDF / ATS", exact: true }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: /^开始导出/ }).click();
   const download = await downloadPromise;

@@ -1,7 +1,5 @@
 import { test, expect, type Page, type CDPSession } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import { unzipSync, strFromU8 } from "fflate";
-import { backgrounds, createDefaultResume, createComponent } from "../src/data";
+import { backgrounds } from "../src/data";
 import { extraTemplates, extraBackgrounds } from "../src/expansion";
 import { designFor } from "../src/designs";
 import { fontOptions } from "../src/fonts";
@@ -10,7 +8,6 @@ const preview = (page: Page) => page.locator(".mobile-nav").getByRole("button", 
 const scale = (page: Page) => page.locator(".pages-stage").evaluate(el => Number((el as HTMLElement).style.getPropertyValue("--preview-scale")));
 const frame = (page: Page) => page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));
 const touch = (cdp: CDPSession, type: string, points: {x:number;y:number;id:number}[]) => cdp.send("Input.dispatchTouchEvent", {type,touchPoints:points.map(p=>({...p,radiusX:5,radiusY:5}))});
-const unpack = (path:string) => Object.fromEntries(Object.entries(unzipSync(readFileSync(path))).map(([k,v])=>[k,k.endsWith(".xml")||k.endsWith(".rels")?strFromU8(v):v]));
 
 test.describe("first visit", () => {
   test.use({storageState:{cookies:[],origins:[]},viewport:{width:390,height:844},hasTouch:true,isMobile:true});
@@ -20,7 +17,7 @@ test.describe("first visit", () => {
     await expect(dialog).toContainText("推荐使用电脑浏览器");
     await page.screenshot({path:"test-results/first-visit-mobile.png"});
     for(let i=0;i<3;i++) await dialog.getByRole("button",{name:"下一步",exact:true}).click();
-    await expect(dialog).toContainText("Word");
+    await expect(dialog).toContainText("ATS 友好 PDF");
     await dialog.getByRole("button",{name:"开始创作",exact:true}).click();
     await page.reload();
     await expect(dialog).toHaveCount(0);
@@ -136,78 +133,4 @@ test("10 commercial-use fonts load from this origin with CJK glyphs and persist"
   const licenses=await page.request.get("/font-licenses.txt");
   expect((await licenses.text()).match(/SIL OPEN FONT LICENSE Version 1.1/g)?.length).toBe(10);
   expect(remote).toEqual([]);
-});
-
-test("real layered Word downloads contain editable text, graphics, hyperlinks and fixed preview pages", async ({page}) => {
-  const data=createDefaultResume();
-  const picture="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+y/2sAAAAASUVORK5CYII=";
-  data.photo=picture;
-  const link=createComponent("links"); link.title="作品集链接"; link.description="https://example.com/portfolio";
-  const art=createComponent("image"); art.image=picture; art.title="作品图片";
-  data.sections[0].components.push(link,art);
-  data.sections.push({id:"hidden",title:"不该导出的隐藏栏目",subtitle:"",visible:false,components:[]});
-  data.exportSettings.fileName="可编辑简历.pdf";
-  await page.addInitScript(data=>{localStorage.setItem("birchify-resume-v1",JSON.stringify(data));},data);
-  await page.goto("/");
-  await page.getByRole("button",{name:"导出 PDF / Word",exact:true}).click();
-  await page.getByRole("button",{name:/Word \(\.docx\)/}).click();
-  await page.getByLabel("Word 导出方式",{exact:true}).selectOption("editable");
-  await expect(page.getByRole("dialog")).toContainText("按行定位的可编辑文本框");
-  await expect(page.getByLabel("导出清晰度",{exact:true})).toBeVisible();
-  const pending=page.waitForEvent("download",{timeout:30000});
-  await page.getByRole("button",{name:/开始导出/}).click();
-  const download=await pending;
-  expect(download.suggestedFilename()).toBe("可编辑简历.docx");
-  await download.saveAs("test-results/editable-resume.docx");
-  const files=unpack((await download.path())!),xml=files["word/document.xml"] as string;
-  expect(xml).toContain("林予安"); expect(xml).toContain("作品集链接"); expect(xml).toContain("作品图片");
-  expect(xml).not.toContain("不该导出的隐藏栏目");
-  expect(xml.indexOf("关于我")).toBeLessThan(xml.indexOf("工作经历"));
-  expect(xml).toContain("w:txbxContent"); expect(xml).toContain("w:drawing");
-  expect(xml).toContain('relativeFrom="page"');
-  expect(files["word/_rels/document.xml.rels"]).toContain("https://example.com/portfolio");
-  expect(Object.keys(files).some(k=>k.startsWith("word/media/"))).toBe(true);
-  // Brand/footer/graphics are in the page image, not a second lossy Word header.
-  expect(Object.keys(files).filter(k=>/word\/(header|footer)\d+\.xml$/.test(k))).toEqual([]);
-  // Repeat through the actual mobile export controls, with both toggles disabled.
-  await page.setViewportSize({width:390,height:844});
-  await page.getByRole("button",{name:"导出 PDF / Word",exact:true}).click();
-  await page.getByRole("switch",{name:"Birchify 品牌水印",exact:true}).click();
-  await page.getByRole("switch",{name:"底部页码",exact:true}).click();
-  const unbranded=page.waitForEvent("download",{timeout:30000});
-  await page.getByRole("button",{name:/开始导出/}).click();
-  const clean=unpack((await (await unbranded).path())!);
-  expect(Object.keys(clean).filter(k=>/word\/(header|footer)\d+\.xml$/.test(k))).toEqual([]);
-  expect(clean["word/document.xml"]).toContain("林予安");
-});
-
-test("Word supports blank resumes, old settings, long multiline content and CJK typography",async({page})=>{
-  const data=createDefaultResume(); delete (data.exportSettings as Partial<typeof data.exportSettings>).format;
-  await page.addInitScript(data=>localStorage.setItem("birchify-resume-v1",JSON.stringify(data)),data);
-  await page.goto("/");
-  await expect(page.locator(".save-status")).toContainText("所有更改已保存到本机");
-  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem("birchify-resume-v1")!).exportSettings.format)).toBe("pdf");
-  const longDownload=page.waitForEvent("download");
-  const results=await page.evaluate(async()=>{
-    const {buildWordBlob}=await import(/* @vite-ignore */ "/src/word.ts");
-    const data=JSON.parse(localStorage.getItem("birchify-resume-v1")!);
-    data.font="wenkai"; data.exportSettings.watermark=false;
-    data.exportSettings.wordMode="editable";
-    data.sections[0].components[0].description=Array.from({length:200},(_,i)=>`第${i+1}段：研究与设计经验，保留所有可编辑文字。`).join("\n");
-    const long=await buildWordBlob(data);
-    const url=URL.createObjectURL(long),a=document.createElement("a"); a.href=url;a.download="long-resume.docx";a.click();
-    data.name="";data.role="";data.email="";data.phone="";data.location="";data.website="";data.photo="";data.sections=[];
-    const blank=await buildWordBlob(data);
-    return {long:long.size,blank:blank.size};
-  });
-  expect(results.long).toBeGreaterThan(9000); expect(results.blank).toBeGreaterThan(5000);
-  const download=await longDownload;
-  await download.saveAs("test-results/long-resume.docx");
-  const files=unpack((await download.path())!);
-  const xml=files["word/document.xml"] as string;
-  expect(xml).toContain("第200段");
-  expect(xml).toContain('w:eastAsia="LXGW WenKai"');
-  expect((xml.match(/<w:txbxContent>/g)||[]).length).toBeGreaterThanOrEqual(200);
-  expect((xml.match(/<w:pageBreakBefore\//g)||[]).length).toBeGreaterThan(1);
-  await expect(page.locator("[data-export-host]")).toHaveCount(0);
 });
